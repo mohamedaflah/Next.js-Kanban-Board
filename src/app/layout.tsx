@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Inter as FontSans } from "next/font/google";
 import "./globals.css";
+import { Provider } from "react-redux";
+import { reduxStore } from "@/redux/store";
+import StoreProvider from "./storeProvider";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -19,7 +22,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={fontSans.className}>{children}</body>
+      <body className={fontSans.className}>
+        {/* <Provider store={reduxStore}>{children}</Provider> */}
+        <StoreProvider>{children}</StoreProvider>
+      </body>
     </html>
   );
 }

@@ -1,8 +1,10 @@
+import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
 
 interface TaskListProp {
   children: ReactNode;
+  className?: string;
 }
-export const DraggableTaskList = ({ children }: TaskListProp) => {
-  return <div className="inline-block h-full">{children}</div>;
+export const DraggableTaskList = ({ children,className }: TaskListProp) => {
+  return <div className={cn("inline-block  ",className)}>{children}</div>;
 };

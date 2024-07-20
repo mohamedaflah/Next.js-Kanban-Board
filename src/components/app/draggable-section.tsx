@@ -9,7 +9,7 @@ export const DraggSection = ({ children, className }: DraggableSectionProp) => {
   return (
     <section
       className={cn(
-        "w-full mt-4 h-full overflow-x-auto scrollbar-none space-x-2 whitespace-nowrap",
+        "w-full mt-4 h-full overflow-x-auto scrollbar-thin space-x-2 whitespace-nowrap",
         className
       )}
     >

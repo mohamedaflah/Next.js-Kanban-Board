@@ -1,9 +1,12 @@
+"use client";
+import { useAppSelector } from "@/redux/store";
 import { Logs } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
 export default function SideBar() {
+  const { boards } = useAppSelector((state) => state.task);
   return (
     <aside className="h-full min-w-56 border-r  flex flex-col">
       <div className="border-b p-5">
@@ -23,13 +26,19 @@ export default function SideBar() {
         </div>
       </div>
       <div className="mt-6">
-        <Link href={"/"} className="flex px-5 items-center h-12 gap-3 relative hover:bg-black/5 transition-all duration-300">
-          <div>
-            <Logs className="w-5" />
-          </div>
-          <span className="text-sm font-medium">Task 1</span>
-          <div className="absolute top-0 right-0 h-full w-2 bg-black/10 shadow-md rounded-tl-md rounded-bl-md"></div>
-        </Link>
+        {boards?.map((item) => (
+          <Link
+            key={item._id}
+            href={"/"}
+            className="flex px-5 items-center h-12 gap-3 relative hover:bg-black/5 transition-all duration-300"
+          >
+            <div>
+              <Logs className="w-5" />
+            </div>
+            <span className="text-sm font-medium">{item.name}</span>
+            <div className="absolute top-0 right-0 h-full w-2 bg-black/10 shadow-md rounded-tl-md rounded-bl-md"></div>
+          </Link>
+        ))}
       </div>
     </aside>
   );
