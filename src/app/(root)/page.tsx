@@ -4,7 +4,12 @@ import { useAppSelector, useAppDispatch } from "@/redux/store";
 import { TodoColumn } from "@/types/todo.types";
 import { Plus } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { Droppable, DragDropContext, Draggable } from "react-beautiful-dnd";
+import {
+  Droppable,
+  DragDropContext,
+  Draggable,
+  DropResult,
+} from "react-beautiful-dnd";
 
 const Home = () => {
   const { columns: reduxCol } = useAppSelector((state) => state.task);
@@ -16,44 +21,43 @@ const Home = () => {
     setColumns(reduxCol as TodoColumn[]);
   }, [reduxCol]);
 
-  const handleDragEnd = (result: any) => {
-    console.log("Drag result:", result); // Debugging outpu
-    alert("()ds");
-    const { source, destination, draggableId } = result;
+  const handleDragEnd = (result: DropResult) => {
+    console.log("Drag result:", result); // Debugging output
 
-    // If there's no destination, exit the function
+    const { source, destination } = result;
+
     if (!destination) {
       return;
     }
 
-    // Reorder tasks within the same column
-    if (source.droppableId === destination.droppableId) {
-      const startColumn = columns.find((col) => col.id === source.droppableId);
-      const endColumn = columns.find(
-        (col) => col.id === destination.droppableId
-      );
+    const updatedColumns = columns.map((column) => ({
+      ...column,
+      tasks: [...column.tasks], 
+    }));
 
-      if (startColumn && endColumn) {
+    const startColumnIndex = updatedColumns.findIndex(
+      (col) => col.id === source.droppableId
+    );
+    const endColumnIndex = updatedColumns.findIndex(
+      (col) => col.id === destination.droppableId
+    );
+
+    if (startColumnIndex !== -1 && endColumnIndex !== -1) {
+      const startColumn = updatedColumns[startColumnIndex];
+      const endColumn = updatedColumns[endColumnIndex];
+
+      // Reorder tasks within the same column
+      if (source.droppableId === destination.droppableId) {
+        const [movedTask] = startColumn.tasks.splice(source.index, 1);
+        startColumn.tasks.splice(destination.index, 0, movedTask);
+      } else {
+        // Move tasks between columns
         const [movedTask] = startColumn.tasks.splice(source.index, 1);
         endColumn.tasks.splice(destination.index, 0, movedTask);
-
-        // Update state and dispatch to Redux store
-        setColumns([...columns]);
       }
-    } else {
-      // Move tasks between columns
-      const startColumn = columns.find((col) => col.id === source.droppableId);
-      const endColumn = columns.find(
-        (col) => col.id === destination.droppableId
-      );
 
-      if (startColumn && endColumn) {
-        const [movedTask] = startColumn.tasks.splice(source.index, 1);
-        endColumn.tasks.splice(destination.index, 0, movedTask);
-
-        // Update state and dispatch to Redux store
-        setColumns([...columns]);
-      }
+      // Update the state with the modified columns array
+      setColumns(updatedColumns);
     }
   };
 
@@ -109,7 +113,7 @@ const Home = () => {
                                   draggableProps={provided.draggableProps}
                                   dragHandleProps={provided.dragHandleProps}
                                   ref={provided.innerRef}
-                                  style={{...provided.draggableProps.style}} // Ensure the style is applied
+                                  style={{ ...provided.draggableProps.style }} // Ensure the style is applied
                                 />
                               )}
                             </Draggable>
