@@ -1,5 +1,6 @@
 "use client";
 import { DraggableCard } from "@/components/app/draggable-card";
+import { moveTasks } from "@/redux/reducers/task.reducer";
 import { useAppSelector, useAppDispatch } from "@/redux/store";
 import { TodoColumn } from "@/types/todo.types";
 import { Plus } from "lucide-react";
@@ -26,15 +27,18 @@ const Home = () => {
 
     const { source, destination } = result;
 
+    // If there's no destination, exit the function
     if (!destination) {
       return;
     }
 
+    // Create a copy of the columns array to ensure immutability
     const updatedColumns = columns.map((column) => ({
       ...column,
-      tasks: [...column.tasks], 
+      tasks: [...column.tasks], // Ensure tasks are copied
     }));
 
+    // Find the source and destination columns
     const startColumnIndex = updatedColumns.findIndex(
       (col) => col.id === source.droppableId
     );
@@ -58,6 +62,7 @@ const Home = () => {
 
       // Update the state with the modified columns array
       setColumns(updatedColumns);
+      dispatch(moveTasks(updatedColumns));
     }
   };
 
