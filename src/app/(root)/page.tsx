@@ -1,9 +1,11 @@
 "use client";
 import { DraggableCard } from "@/components/app/draggable-card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { moveTasks } from "@/redux/reducers/task.reducer";
 import { useAppSelector, useAppDispatch } from "@/redux/store";
 import { TodoColumn } from "@/types/todo.types";
-import { Plus } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import {
   Droppable,
@@ -11,7 +13,10 @@ import {
   Draggable,
   DropResult,
 } from "react-beautiful-dnd";
-
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { statusAddSchema } from "../../lib/schema/statusAddschema";
 const Home = () => {
   const { columns: reduxCol } = useAppSelector((state) => state.task);
   const dispatch = useAppDispatch();
@@ -22,6 +27,19 @@ const Home = () => {
     setColumns(reduxCol as TodoColumn[]);
   }, [reduxCol]);
 
+  type StatusSchema = z.infer<typeof statusAddSchema>;
+  const {
+    watch,
+    setValue,
+    formState: { errors },
+    trigger,
+    handleSubmit,
+  } = useForm<StatusSchema>({
+    resolver: zodResolver(statusAddSchema),
+    mode: "onChange",
+    reValidateMode: "onChange",
+  });
+  const handleStatusAddFormSubmit = (values: StatusSchema) => {};
   const handleDragEnd = (result: DropResult) => {
     console.log("Drag result:", result); // Debugging output
 
@@ -67,13 +85,66 @@ const Home = () => {
   };
 
   return (
-    <main className="w-full h-full p-5 overflow-x-hidden  ">
+    <main className="w-full h-full p-5 overflow-x-hidden scrollbar-thin scrollbar-track-transparent scrollbar-thumb-slate-300 ">
       <div className="w-full flex justify-between h-10 items-center">
         <div>
           <h1 className="font-medium">Task 1 !🎇🎨🎏</h1>
         </div>
         <div className="">
-          <button className="min-w-20 rounded-sm fullcenter px-4 text-sm bg-forgroundSecondary-1 h-9 font-medium text-[white] gap-2">
+          <dialog
+            id="my_modal_6"
+            className="modal modal-bottom sm:modal-middle"
+          >
+            <div className="modal-box bg-white-2">
+              <div className="w-full flex justify-between">
+                <h1>Add new status</h1>
+                <form method="dialog">
+                  {/* if there is a button in form, it will close the modal */}
+                  <button className=" ">
+                    <X className="w-5" />
+                  </button>
+                </form>
+              </div>
+              <form
+                className="w-full flex flex-col"
+                onSubmit={handleSubmit(handleStatusAddFormSubmit)}
+              >
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="" className="text-sm">
+                    status
+                  </label>
+                  <Input
+                    type="text"
+                    placeholder="Board name"
+                    value={watch("status")}
+                    onChange={(e) => {
+                      setValue("status", e.target.value);
+                      trigger("status");
+                    }}
+                  />
+                  <span className="text-[13px] text-red-600">
+                    {/* {errors && errors.name && errors.name?.message} */}
+                  </span>
+                </div>
+                <div className="w-full mt-3">
+                  <Button
+                    type="submit"
+                    className="bg-forgroundSecondary-1 w-full"
+                  >
+                    Submit
+                  </Button>
+                </div>
+              </form>
+            </div>
+          </dialog>
+          <button
+            onClick={() =>
+              (
+                document?.getElementById("my_modal_6") as HTMLDialogElement
+              )?.showModal()
+            }
+            className="min-w-20 rounded-sm fullcenter px-4 text-sm bg-forgroundSecondary-1 h-9 font-medium text-[white] gap-2"
+          >
             Add Status
             <Plus className="w-5" />
           </button>
