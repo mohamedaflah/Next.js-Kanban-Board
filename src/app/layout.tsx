@@ -22,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={fontSans.className}>
+      <body className={fontSans.className+" overflow-hidden"}>
         {/* <Provider store={reduxStore}>{children}</Provider> */}
         <StoreProvider>{children}</StoreProvider>
       </body>

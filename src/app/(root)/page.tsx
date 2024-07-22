@@ -67,14 +67,14 @@ const Home = () => {
   };
 
   return (
-    <main className="w-full h-full p-5 overflow-hidden">
+    <main className="w-full h-full p-5 overflow-x-hidden  ">
       <div className="w-full flex justify-between h-10 items-center">
         <div>
           <h1 className="font-medium">Task 1 !🎇🎨🎏</h1>
         </div>
         <div className="">
           <button className="min-w-20 rounded-sm fullcenter px-4 text-sm bg-forgroundSecondary-1 h-9 font-medium text-[white] gap-2">
-            Add Todo
+            Add Status
             <Plus className="w-5" />
           </button>
         </div>
@@ -85,7 +85,7 @@ const Home = () => {
             <section
               {...provided.droppableProps}
               ref={provided.innerRef}
-              className="w-full mt-4 h-full overflow-x-auto scrollbar-none space-x-2 whitespace-nowrap relative flex"
+              className="w-full mt-4 h-full pb-10 overflow-x-auto scrollbar-none space-x-2 whitespace-nowrap relative flex"
             >
               {columns?.map((column) => (
                 <Droppable key={column.id} droppableId={column.id.toString()}>
